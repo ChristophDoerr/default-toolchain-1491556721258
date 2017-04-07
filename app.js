@@ -26,11 +26,45 @@ if (process.env.VCAP_SERVICES) {
 	console.log("ERROR: IoT Service was not bound!");
 }
 
-var basicConfig = {
-	org: credentials.org,
-	apiKey: credentials.apiKey,
-	apiToken: credentials.apiToken
-};
+var basicConfig = {"org":"25zd03",
+		"apiKey":"a-25zd03-vtfnx0xkda",
+		"apiToken":"PXg4jiLmwmKz-Rb+Pc"};
+}
+
+var Client = require("ibmiotf");
+var appClientConfig = {
+    "org" : "25zd03",
+    "id" : "Piffl",
+    "domain": "internetofthings.ibmcloud.com",
+    "auth-key" : "a-25zd03-vtfnx0xkda",
+    "auth-token" : "PXg4jiLmwmKz-Rb+Pc"
+}
+
+var appClient = new Client.IotfApplication(appClientConfig);
+
+appClient.connect();
+appClient.log.setLevel('trace');
+appClient.on("connect", function () {
+
+//Add your code here
+	
+    var myData={'name' : 'foo', 'cpu' : 60, 'mem' : 50};
+    myData = JSON.stringify(myData);
+    appClient.publishDeviceEvent("myDeviceType","device01", "myEvent", "json", myData);
+
+});
+appClient.on("deviceEvent", function (deviceType, deviceId, eventType, format, payload) {
+
+    console.log("Device Event from :: "+deviceType+" : "+deviceId+" of event "+eventType+" with payload : "+payload);
+
+});
+
+
+
+appClient.on("error", function (err) {
+    console.log("Error : "+err);
+});
+
 
 var options = {
 	host: 'internetofthings.ibmcloud.com',
