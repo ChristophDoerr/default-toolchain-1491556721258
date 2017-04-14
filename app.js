@@ -33,11 +33,11 @@ var basicConfig = {org: credentials.org,
 
 var Client = require("ibmiotf");
 var appClientConfig = {
-    "org" : "25zd03",
+    "org" : "qlaqrj",
     "id" : "Piffl",
     "domain": "internetofthings.ibmcloud.com",
-    "auth-key" : "a-25zd03-vtfnx0xkda",
-    "auth-token" : "PXg4jiLmwmKz-Rb+Pc"
+    "auth-key" : "a-qlaqrj-weyxqsljid",
+    "auth-token" : "7FPZbKNlTrcNXQ2p60"
 }
 
 var appClient = new Client.IotfApplication(appClientConfig);
@@ -46,17 +46,29 @@ appClient.connect();
 
 appClient.on("connect", function () {
 
-    var myData={'name' : 'foo', 'cpu' : 60, 'mem' : 50};
-    myData = JSON.stringify(myData);
+    
     appClient.subscribeToDeviceEvents();
-   
+
 
 });
 
 
 appClient.on("deviceEvent", function (deviceType, deviceId, eventType, format, payload) {
-
-    console.log("Device Event from :: "+deviceType+" : "+deviceId+" of event "+eventType+" with payload : "+payload);
+	var obj = JSON.parse(payload);
+	
+	var xAxis = obj.d.ax;
+	var yAxis = obj.d.ay;
+	var zAxis = obj.d.az;
+	
+	if((xAxis>0.03 || xAxis<-0.03) & (yAxis>0.03 || yAxis<-0.03) & (zAxis>0.05 || zAxis<-0.05)){
+		console.log("Handy bewegt sich");
+	}else{
+		console.log("Handy liegt auf dem Tisch");
+	}
+	//console.log("X-Achse: " + xAxis);
+	//console.log(yAxis);
+	//console.log(zAxis);
+//    console.log("Device Event from :: "+deviceType+" : "+deviceId+" of event "+eventType+" with payload : "+payload);
 
 });
 
